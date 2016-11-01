@@ -16,12 +16,15 @@ class Neuron:
         self.previous_delta = 0
         self.threshold = random.uniform(-bound, bound)
         self.learning_rate = learning_rate
+        self.adaptive_factor = 1
 
     def adjust_weight_and_threshold(self, delta, inputs_vector):
+        momentum = 0.5 * self.previous_delta
+        self.adaptive_factor += (delta - self.previous_delta)
         self.threshold -= self.learning_rate * delta
         for i, input_value in enumerate(inputs_vector):
             # Add adjustment plus a momentumm factor
-            self.weights[i] += (self.learning_rate * delta * input_value + 0.09 * self.previous_delta)
+            self.weights[i] += (self.learning_rate * delta * input_value * self.adaptive_factor + momentum)
         self.previous_delta = delta
 
     def output(self, input_vector):
