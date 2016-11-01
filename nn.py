@@ -20,7 +20,8 @@ class Neuron:
     def adjust_weight_and_threshold(self, delta, inputs_vector):
         self.threshold -= self.learning_rate * delta
         for i, input_value in enumerate(inputs_vector):
-            self.weights[i] += (self.learning_rate * delta * input_value + 0.01 * self.previous_delta)
+            # Add adjustment plus a momentumm factor
+            self.weights[i] += (self.learning_rate * delta * input_value + 0.09 * self.previous_delta)
         self.previous_delta = delta
 
     def output(self, input_vector):
@@ -62,9 +63,9 @@ def back_propagate(neural_network, input_v, target):
 def classify(neural_network, input):
     return feed_forward(neural_network, input)[-1]
 
-def network_factory(n_inputs, n_hidden, n_outputs):
-    hidden_layer = [Neuron(n_inputs=n_inputs) for _ in range(n_inputs)]
-    output_layer = [Neuron(n_inputs=len(hidden_layer)) for _ in range(n_outputs)]
+def network_factory(n_inputs, n_hidden, n_outputs, learning_rate):
+    hidden_layer = [Neuron(n_inputs=n_inputs, learning_rate=learning_rate) for _ in range(n_inputs)]
+    output_layer = [Neuron(n_inputs=len(hidden_layer), learning_rate=learning_rate) for _ in range(n_outputs)]
     return [hidden_layer, output_layer]
 
 if __name__ == "__main__":
@@ -89,8 +90,8 @@ if __name__ == "__main__":
             i += step
 
     alphas = []
-    for a in stepper(0.02, 0.2, 0.02):
-        network = network_factory(n_inputs=2,n_hidden=2,n_outputs=1)
+    for a in stepper(0.8, 1.6, 0.02):
+        network = network_factory(n_inputs=2,n_hidden=2,n_outputs=1, learning_rate=a)
         for i in range(3500):
             error = 0
             for d, t in zip(data, target):
