@@ -1,7 +1,7 @@
 import numpy as np
 
 class Neuron:
-    def __init__(self, learning_rate=0.1, max_iters=100):
+    def __init__(self, learning_rate=0.1, max_iters=1000):
         self.learning_rate = learning_rate
         self.max_iters = max_iters
 
